@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FBA Profit Calculator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Amazon FBA Profit Calculator</h1>
+
+<label title="What you pay to source or manufacture each unit.">Product Cost per Unit ($): <input type="number" id="productCost" step="0.01"></label>
+
+<label title="The price you charge for the product on Amazon.">Selling Price ($): <input type="number" id="sellingPrice" step="0.01"></label>
+
+<label title="Amazon charges this to pick, pack, and ship your product.">Fulfillment Fee ($): <input type="number" id="fulfillmentFee" step="0.01" value="3.22"></label>
+
+<hr>
+<h3>📦 Required Amazon Fees</h3>
+<label title="Amazon takes 15% of the sale price as commission."><input type="checkbox" id="includeReferral" checked disabled> Referral Fee (15%)</label>
+
+<hr>
+<h3>🏬 FBA-Specific Fees</h3>
+<label title="Amazon charges to store inventory in its warehouse, based on size."><input type="checkbox" id="includeStorage"> Monthly Storage Fee (~$0.87/cu ft)</label>
+
+<label title="How much space one unit of your product takes up in cubic feet.">Cubic Feet per Unit: <input type="number" id="cubicFeet" step="0.01" value="1"></label>
+
+<label title="If you don’t label your products, Amazon charges $0.30 per unit."><input type="checkbox" id="includeLabeling"> Amazon Labeling ($0.30/unit)</label>
+
+<label title="Amazon will prep (bag/bubble wrap) your product for $1.00 per unit."><input type="checkbox" id="includePrep"> Amazon Prep Service ($1.00/unit)</label>
+
+<label title="After 6 months in storage, Amazon charges $0.50 extra per unit."><input type="checkbox" id="includeAged"> Aged Inventory Fee ($0.50/unit)</label>
+
+<label title="To remove unsold inventory, Amazon charges $0.50 per unit."><input type="checkbox" id="includeRemoval"> Removal Fee ($0.50/unit)</label>
+
+<hr>
+<h3>⚙️ Other Optional Fees</h3>
+<label title="Monthly subscription fee for Amazon Pro Seller account."><input type="checkbox" id="includePro"> Pro Seller Fee ($39.99/month)</label>
+
+<label title="Number of units you plan to sell each month.">Units Sold per Month: <input type="number" id="unitsPerMonth" value="1"></label>
+
+<label title="Estimated number of returned units per month (return fee ≈ fulfillment fee).">Units Returned per Month: <input type="number" id="returnsPerMonth" value="0"></label>
+
+
+
+    <div id="results"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
