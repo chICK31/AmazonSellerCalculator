@@ -2,25 +2,40 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>FBA Profit Calculator</title>
+  <title>Amazon Profit Calculator</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="container">
-    <h1>Amazon FBA Profit Calculator</h1>
+    <h1>Amazon Profit Calculator</h1>
+<label title="Check this if you are using FBA. Uncheck if you're fulfilling orders yourself (FBM).">
+  <input type="checkbox" id="toggleFBA" checked> FBA Mode (Uncheck for FBM)
+</label>
 
 <label title="What you pay to source or manufacture each unit.">Product Cost per Unit ($): <input type="number" id="productCost" step="0.01"></label>
 <label title="Cost of your own packaging per unit (e.g. polymailer, box, tissue, etc.).">Packaging Cost per Unit ($): <input type="number" id="packagingCost" step="0.01" value="0"></label>
 
 <label title="The price you charge for the product on Amazon.">Selling Price ($): <input type="number" id="sellingPrice" step="0.01"></label>
+<label><input type="checkbox" id="sellerPaysShipping" checked> I pay for shipping (uncheck if customer pays)</label>
 
-<label title="Amazon charges this to pick, pack, and ship your product.">Fulfillment Fee ($): <input type="number" id="fulfillmentFee" step="0.01" value="3.22"></label>
+<label title="Your estimated shipping cost per unit (FBM or general shipping).">Shipping Cost per Unit ($): <input type="number" id="shippingCost" step="0.01" value="0"></label>
+
+<label title="Total number of units sold over time.">Total Units Sold: 
+  <input type="number" id="unitsSold" value="0">
+</label>
+
+<label title="Amazon charges this only if you're using FBA. It covers picking, packing, and shipping.">
+  Fulfillment Fee ($):
+  <input type="number" id="fulfillmentFee" step="0.01" value="3.22">
+</label>
 
 <hr>
 <h3>📦 Required Amazon Fees</h3>
 <label title="Amazon takes 15% of the sale price as commission."><input type="checkbox" id="includeReferral" checked disabled> Referral Fee (15%)</label>
 
 <hr>
+<div id="fbaFields">
+
 <h3>🏬 FBA-Specific Fees</h3>
 <label title="Amazon charges to store inventory in its warehouse, based on size."><input type="checkbox" id="includeStorage"> Monthly Storage Fee (~$0.87/cu ft)</label>
 
@@ -33,7 +48,7 @@
 <label title="After 6 months in storage, Amazon charges $0.50 extra per unit."><input type="checkbox" id="includeAged"> Aged Inventory Fee ($0.50/unit)</label>
 
 <label title="To remove unsold inventory, Amazon charges $0.50 per unit."><input type="checkbox" id="includeRemoval"> Removal Fee ($0.50/unit)</label>
-
+</div>
 <hr>
 <h3>⚙️ Other Optional Fees</h3>
 <label title="Monthly subscription fee for Amazon Pro Seller account."><input type="checkbox" id="includePro"> Pro Seller Fee ($39.99/month)</label>
