@@ -6,6 +6,7 @@ function calculate() {
   const returnsPerMonthRaw = parseInt(document.getElementById("returnsPerMonth").value) || 0;
   const returnsPerMonth = Math.min(returnsPerMonthRaw, unitsPerMonth); // prevent over-returns
   const cubicFeet = parseFloat(document.getElementById("cubicFeet").value) || 0;
+    const packagingCost = parseFloat(document.getElementById("packagingCost").value) || 0;
 
   // Fee checkboxes
   const includePro = document.getElementById("includePro").checked;
@@ -25,7 +26,8 @@ function calculate() {
   const removalFee = includeRemoval ? 0.50 : 0;
 
   const optionalFees = proFee + storageFee + labelingFee + prepFee + agedFee + removalFee;
-  const totalCostPerUnit = productCost + fulfillmentFee + referralFee + optionalFees;
+    const totalCostPerUnit = productCost + fulfillmentFee + referralFee + optionalFees + packagingCost;
+
 
   // Return handling
     const returnFeePerUnit = fulfillmentFee; // always applied
