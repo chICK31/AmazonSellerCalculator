@@ -1,44 +1,46 @@
 function calculate() {
-  const productCost = parseFloat(document.getElementById("productCost").value) || 0;
-  const sellingPrice = parseFloat(document.getElementById("sellingPrice").value) || 0;
-  const fulfillmentFee = parseFloat(document.getElementById("fulfillmentFee").value) || 0;
-  const unitsPerMonth = parseInt(document.getElementById("unitsPerMonth").value) || 1;
-  const returnsPerMonthRaw = parseInt(document.getElementById("returnsPerMonth").value) || 0;
-  const returnsPerMonth = Math.min(returnsPerMonthRaw, unitsPerMonth); // prevent over-returns
-  const cubicFeet = parseFloat(document.getElementById("cubicFeet").value) || 0;
-    const packagingCost = parseFloat(document.getElementById("packagingCost").value) || 0;
+  const get = id => parseFloat(document.getElementById(id).value) || 0;
+  const getInt = id => parseInt(document.getElementById(id).value) || 0;
 
-  // Fee checkboxes
-  const includePro = document.getElementById("includePro").checked;
-  const includeStorage = document.getElementById("includeStorage").checked;
-  const includeLabeling = document.getElementById("includeLabeling").checked;
-  const includePrep = document.getElementById("includePrep").checked;
-  const includeAged = document.getElementById("includeAged").checked;
-  const includeRemoval = document.getElementById("includeRemoval").checked;
+  const productCost = get("productCost");
+  const sellingPrice = get("sellingPrice");
+  const fulfillmentFee = get("fulfillmentFee");
+  const unitsPerMonth = getInt("unitsPerMonth");
+  const returnsPerMonth = Math.min(getInt("returnsPerMonth"), unitsPerMonth);
+  const cubicFeet = get("cubicFeet");
+  const packagingCost = get("packagingCost");
+  const unitsSold = getInt("unitsSold");
 
-  // Base + Optional Fees
+  const isFBA = document.getElementById("toggleFBA").checked;
+  const shippingCost = get("shippingCost");
+  const sellerPaysShipping = document.getElementById("sellerPaysShipping").checked;
+
+  const getChecked = id => document.getElementById(id).checked;
+  const optionalFees = 
+    (getChecked("includePro") ? 39.99 / unitsPerMonth : 0) +
+    (isFBA && getChecked("includeStorage") ? 0.87 * cubicFeet : 0) +
+    (isFBA && getChecked("includeLabeling") ? 0.30 : 0) +
+    (isFBA && getChecked("includePrep") ? 1.00 : 0) +
+    (isFBA && getChecked("includeAged") ? 0.50 : 0) +
+    (isFBA && getChecked("includeRemoval") ? 0.50 : 0);
+
   const referralFee = sellingPrice * 0.15;
-  const proFee = includePro ? 39.99 / unitsPerMonth : 0;
-  const storageFee = includeStorage ? (0.87 * cubicFeet) : 0;
-  const labelingFee = includeLabeling ? 0.30 : 0;
-  const prepFee = includePrep ? 1.00 : 0;
-  const agedFee = includeAged ? 0.50 : 0;
-  const removalFee = includeRemoval ? 0.50 : 0;
+  const shippingFee = sellerPaysShipping ? shippingCost : 0;
+  const fbaFee = isFBA ? fulfillmentFee : 0;
 
-  const optionalFees = proFee + storageFee + labelingFee + prepFee + agedFee + removalFee;
-    const totalCostPerUnit = productCost + fulfillmentFee + referralFee + optionalFees + packagingCost;
-
-
-  // Return handling
-    const returnFeePerUnit = fulfillmentFee; // always applied
-  const totalReturnCost = returnFeePerUnit * returnsPerMonth;
-
-  // Profit calculations
+  const totalCostPerUnit = productCost + fbaFee + referralFee + optionalFees + packagingCost + shippingFee;
   const profitPerUnit = sellingPrice - totalCostPerUnit;
-  const grossProfit = profitPerUnit * unitsPerMonth;
-  const netProfitAfterReturns = grossProfit - totalReturnCost;
+  const returnCost = isFBA ? fulfillmentFee : (sellerPaysShipping ? sellingPrice + shippingCost : sellingPrice);
 
-  // Additional metrics
+  // Monthly
+  const grossMonthlyProfit = profitPerUnit * unitsPerMonth;
+  const returnLoss = returnCost * returnsPerMonth;
+  const netMonthlyProfit = grossMonthlyProfit - returnLoss;
+
+  // Lifetime
+  const totalRevenue = sellingPrice * unitsSold;
+  const totalNetProfit = profitPerUnit * unitsSold;
+
   const breakEvenItemCost = sellingPrice - (totalCostPerUnit - productCost);
   const marginPercent = (profitPerUnit / sellingPrice) * 100;
 
@@ -49,16 +51,25 @@ function calculate() {
     <strong>Total Cost per Unit (with fees):</strong> $${totalCostPerUnit.toFixed(2)}<br>
     <strong>Profit per Unit:</strong> $${profitPerUnit.toFixed(2)}<br>
     <strong>Profit Margin:</strong> ${marginPercent.toFixed(2)}%<br>
-    <strong>Gross Monthly Profit (${unitsPerMonth} units):</strong> $${grossProfit.toFixed(2)}<br>
-    <strong>Return Costs (${returnsPerMonth} returns):</strong> -$${totalReturnCost.toFixed(2)}<br>
+    <strong>Gross Monthly Profit (${unitsPerMonth} units):</strong> $${grossMonthlyProfit.toFixed(2)}<br>
+    <strong>Return Costs (${returnsPerMonth} returns):</strong> -$${returnLoss.toFixed(2)}<br>
     <strong>Max Item Cost to Break Even:</strong> $${breakEvenItemCost.toFixed(2)}<br>
-    <strong><u>Net Monthly Profit After Returns:</u></strong> $${netProfitAfterReturns.toFixed(2)}
+    <strong><u>Net Monthly Profit After Returns:</u></strong> $${netMonthlyProfit.toFixed(2)}<br>
+    <strong>Total Revenue (${unitsSold} units sold):</strong> $${totalRevenue.toFixed(2)}<br>
+    <strong>Total Net Profit:</strong> $${totalNetProfit.toFixed(2)}<br>
   `;
 
-  // Visual warning if losing money
-  document.getElementById("results").style.color = netProfitAfterReturns < 0 ? "red" : "green";
+  document.getElementById("results").style.color = netMonthlyProfit < 0 ? "red" : "green";
+
+  // Show/hide FBA fields
+  document.getElementById("fbaFields").style.display = isFBA ? "block" : "none";
+
+  const fulfillmentFeeInput = document.getElementById("fulfillmentFee");
+  fulfillmentFeeInput.disabled = !isFBA;
+  fulfillmentFeeInput.style.backgroundColor = isFBA ? "white" : "#ddd";
+  if (!isFBA) fulfillmentFeeInput.value = 0;
 }
-// Auto-trigger calculate on all inputs and checkboxes
+
 window.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
     document.querySelectorAll("input").forEach(input => {
@@ -66,5 +77,5 @@ window.addEventListener("DOMContentLoaded", () => {
       input.addEventListener("change", calculate);
     });
     calculate(); // initial run
-  }, 50); // slight delay to ensure DOM is ready
+  }, 50);
 });
